@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_all"
+        android:enabled="true"
+        android:icon="@drawable/ic_all_inclusive"
+        android:title="@string/tab_all"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menu_favourites"
+        android:enabled="true"
+        android:icon="@drawable/favourite_50"
+        android:title="@string/tab_favorites"
+        app:showAsAction="ifRoom" />
+</menu>
