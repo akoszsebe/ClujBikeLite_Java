@@ -84,7 +84,7 @@ public class AllFragment extends Fragment {
         return view;
     }
 
-    private void SyncData()
+    public void SyncData()
     {
         SharedPreferences sharedPref = getActivity().getSharedPreferences("favorite_stations", MODE_PRIVATE);
         final Set<String> favorite_stations = sharedPref.getStringSet("favorite_stations", new HashSet<String>());

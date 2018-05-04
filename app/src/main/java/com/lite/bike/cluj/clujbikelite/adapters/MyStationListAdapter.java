@@ -87,8 +87,10 @@ public class MyStationListAdapter extends BaseAdapter {
                     SharedPreferences sharedPref = activity.getSharedPreferences("favorite_stations", Context.MODE_PRIVATE);
                     final Set<String> favorite_stations = sharedPref.getStringSet("favorite_stations", new HashSet<String>());
                     SharedPreferences.Editor editor = sharedPref.edit();
-                    favorite_stations.remove(station.station.getStationName());
-                    editor.putStringSet("favorite_stations", favorite_stations);
+                    Set<String> new_favorite_stations = new HashSet<>();
+                    new_favorite_stations.addAll(favorite_stations);
+                    new_favorite_stations.remove(station.station.getStationName());
+                    editor.putStringSet("favorite_stations", new_favorite_stations);
                     editor.apply();
                     itemList.remove(station);
                     notifyDataSetChanged();
@@ -103,8 +105,10 @@ public class MyStationListAdapter extends BaseAdapter {
                     SharedPreferences sharedPref = activity.getSharedPreferences("favorite_stations", Context.MODE_PRIVATE);
                     final Set<String> favorite_stations = sharedPref.getStringSet("favorite_stations", new HashSet<String>());
                     SharedPreferences.Editor editor = sharedPref.edit();
-                    favorite_stations.add(station.station.getStationName());
-                    editor.putStringSet("favorite_stations", favorite_stations);
+                    Set<String> new_favorite_stations = new HashSet<>();
+                    new_favorite_stations.addAll(favorite_stations);
+                    new_favorite_stations.add(station.station.getStationName());
+                    editor.putStringSet("favorite_stations", new_favorite_stations);
                     editor.apply();
                     itemList.get((int)station.Id).is_favorite = true;
                     notifyDataSetChanged();
