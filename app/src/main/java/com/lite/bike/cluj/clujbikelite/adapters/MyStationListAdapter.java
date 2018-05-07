@@ -2,6 +2,7 @@ package com.lite.bike.cluj.clujbikelite.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.lite.bike.cluj.clujbikelite.Info_MapsActivity;
 import com.lite.bike.cluj.clujbikelite.R;
 import com.lite.bike.cluj.clujbikelite.model.ListViewItemStation;
 
@@ -60,14 +62,14 @@ public class MyStationListAdapter extends BaseAdapter {
         ImageView img_favorite = (ImageView)view.findViewById(R.id.imageviewAddToFavourites);
         ImageView imageviewActive = (ImageView)view.findViewById(R.id.imageviewActive);
 
-        if (itemList.get(position).is_favorite)
-        {
-            img_favorite.setImageResource(R.drawable.favouriteselected_48);
-        }
-        else
-        {
-            img_favorite.setImageResource(R.drawable.favourite_50);
-        }
+//        if (itemList.get(position).is_favorite)
+//        {
+//            img_favorite.setImageResource(R.drawable.favouriteselected_48);
+//        }
+//        else
+//        {
+//            img_favorite.setImageResource(R.drawable.favourite_50);
+//        }
 
 
 
@@ -80,20 +82,26 @@ public class MyStationListAdapter extends BaseAdapter {
 
         if (favorite)
         {
-            img_favorite.setImageResource(R.drawable.favouriteselected_48);
+//            img_favorite.setImageResource(R.drawable.favouriteselected_48);
             img_favorite.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    SharedPreferences sharedPref = activity.getSharedPreferences("favorite_stations", Context.MODE_PRIVATE);
-                    final Set<String> favorite_stations = sharedPref.getStringSet("favorite_stations", new HashSet<String>());
-                    SharedPreferences.Editor editor = sharedPref.edit();
-                    Set<String> new_favorite_stations = new HashSet<>();
-                    new_favorite_stations.addAll(favorite_stations);
-                    new_favorite_stations.remove(station.station.getStationName());
-                    editor.putStringSet("favorite_stations", new_favorite_stations);
-                    editor.apply();
-                    itemList.remove(station);
-                    notifyDataSetChanged();
+
+                    Intent info_MapsActivity = new Intent(context, Info_MapsActivity.class);
+                    info_MapsActivity.putExtra("station_name", station.station.getStationName());
+                    info_MapsActivity.putExtra("longitude", station.station.getLongitude());
+                    info_MapsActivity.putExtra("latitude", station.station.getLatitude());
+                    context.startActivity(info_MapsActivity);
+//                    SharedPreferences sharedPref = activity.getSharedPreferences("favorite_stations", Context.MODE_PRIVATE);
+//                    final Set<String> favorite_stations = sharedPref.getStringSet("favorite_stations", new HashSet<String>());
+//                    SharedPreferences.Editor editor = sharedPref.edit();
+//                    Set<String> new_favorite_stations = new HashSet<>();
+//                    new_favorite_stations.addAll(favorite_stations);
+//                    new_favorite_stations.remove(station.station.getStationName());
+//                    editor.putStringSet("favorite_stations", new_favorite_stations);
+//                    editor.apply();
+//                    itemList.remove(station);
+//                    notifyDataSetChanged();
                 }
             });
         }

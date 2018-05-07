@@ -34,16 +34,18 @@ public class HomeActivity extends AppCompatActivity {
         if (toolbar != null)
         {
             setSupportActionBar(toolbar);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-            getSupportActionBar().setHomeButtonEnabled(false);
+            //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            //getSupportActionBar().setHomeButtonEnabled(true);
         }
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
+
         TabItem tabChats = findViewById(R.id.tab_all);
         TabItem tabStatus = findViewById(R.id.tab_favorites);
 
         final ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
+        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager));
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -68,44 +70,8 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        //tabLayout.setupWithViewPager(viewPager);
-
         rc = new RestClient(this);
     }
-
-//    boolean LoadFragment(int id)
-//    {
-//        switch (id)
-//        {
-//            case R.id.menu_all:
-//                fragment = AllFragment.newInstance();
-//                break;
-//            case R.id.menu_favourites:
-//                fragment = FavoriteFragment.newInstance();
-//                break;
-//        }
-//        if (fragment == null)
-//            return false;
-//
-//        getSupportFragmentManager().beginTransaction()
-//                .replace(R.id.content_frame, fragment)
-//                .commit();
-//        return true;
-//    }
-//
-//    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-//            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-//
-//        @Override
-//        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//            if (fragment != null)
-//            {
-//                fragment.onDestroy();
-//            }
-//            return LoadFragment(item.getItemId());
-//        }
-//    };
-
 
 
 }
