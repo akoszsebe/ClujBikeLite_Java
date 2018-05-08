@@ -20,16 +20,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyTheme">
 
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBttxvKfBB_N9-4Lw1CE6bH1ag7CxgWAfI" />
-
         <activity
             android:name=".HomeActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -47,7 +42,7 @@
 
         <activity
             android:name=".Info_MapsActivity"
-            android:label="@string/title_activity_info__maps"></activity>
+            android:label="Map"></activity>
     </application>
 
 </manifest>
