@@ -14,6 +14,7 @@ import com.lite.bike.cluj.clujbikelite.R;
 import com.lite.bike.cluj.clujbikelite.fragments.AllFragment;
 import com.lite.bike.cluj.clujbikelite.fragments.FavoriteFragment;
 
+import java.io.SyncFailedException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,12 +47,13 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         return PAGE_COUNT;
     }
 
-    public void RefreshAll(){
-        allFragment.SyncData();
+    public void Refresh(int selectedtab){
+        if (selectedtab == 0)
+            allFragment.SyncData();
+        else
+            favoriteFragment.SyncData();
     }
 
-    public void RefreshFavorite(){
-        favoriteFragment.SyncData();
-    }
+
 
 }

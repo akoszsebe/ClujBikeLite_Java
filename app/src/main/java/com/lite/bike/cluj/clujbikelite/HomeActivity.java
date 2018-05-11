@@ -31,6 +31,8 @@ public class HomeActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private ViewPagerAdapter adapter;
+    private boolean pause = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,37 +54,28 @@ public class HomeActivity extends AppCompatActivity {
 
 
         AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.appbar);
-        final ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), appBarLayout);
+        adapter = new ViewPagerAdapter(getSupportFragmentManager(), appBarLayout);
         viewPager.setAdapter(adapter);
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager));
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                if (tab.getPosition() == 1){
-                    adapter.RefreshFavorite();
-                }
-                else {
-                    adapter.RefreshAll();
-                }
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-
-        });
 
         rc = new RestClient(this);
 
     }
 
+    @Override
+    protected void onResume(){
+        super.onResume();
+        if(adapter!= null && pause) {
+            adapter.Refresh(0);
+            adapter.Refresh(1);
+        }
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        pause = true;
+    }
 
 }

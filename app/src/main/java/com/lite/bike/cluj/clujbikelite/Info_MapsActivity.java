@@ -49,7 +49,7 @@ public class Info_MapsActivity extends AppCompatActivity implements OnMapReadyCa
         TextView tv_parking = (TextView) findViewById(R.id.textViev_parking);
 
         tv_bikes.setText(tv_bikes.getText()+"     "+bikes );
-        tv_parking.setText(tv_parking.getText()+" " +parking);
+        tv_parking.setText(tv_parking.getText()+"  " +parking);
         is_Favorite = favorite_stations.contains(station_name);
 
         if (toolbar != null)
