@@ -1,13 +1,20 @@
 package com.lite.bike.cluj.clujbikelite;
 
+import android.os.Build;
 import android.os.Bundle;
 
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabItem;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.widget.AbsListView;
 
 import com.google.gson.Gson;
 import com.lite.bike.cluj.clujbikelite.adapters.ViewPagerAdapter;
@@ -30,7 +37,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home);
 
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        final Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         if (toolbar != null)
         {
             setSupportActionBar(toolbar);
@@ -43,7 +50,9 @@ public class HomeActivity extends AppCompatActivity {
         TabItem tabChats = findViewById(R.id.tab_all);
         TabItem tabStatus = findViewById(R.id.tab_favorites);
 
-        final ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+
+        AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.appbar);
+        final ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), appBarLayout);
         viewPager.setAdapter(adapter);
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager));
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -68,9 +77,11 @@ public class HomeActivity extends AppCompatActivity {
             public void onTabReselected(TabLayout.Tab tab) {
 
             }
+
         });
 
         rc = new RestClient(this);
+
     }
 
 

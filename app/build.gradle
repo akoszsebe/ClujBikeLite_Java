@@ -10,14 +10,21 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    signingConfigs {
+        release {
+            storeFile file("ClujBikeLite_java.jks")
+            storePassword "Ltdguitars1"
+            keyAlias "key0"
+            keyPassword "Ltdguitars1"
+            v2SigningEnabled false
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             lintOptions {
-
                 checkReleaseBuilds false
-
             }
         }
     }
@@ -32,7 +39,7 @@ dependencies {
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support:design:27.1.1'
+    api  'com.android.support:design:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     implementation 'com.android.support:support-vector-drawable:27.1.1'
     implementation 'com.google.android.gms:play-services-maps:15.0.1'

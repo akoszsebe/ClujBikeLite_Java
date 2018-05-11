@@ -2,12 +2,16 @@ package com.lite.bike.cluj.clujbikelite.fragments;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ListView;
 
 import com.android.volley.Response;
@@ -37,6 +41,7 @@ public class FavoriteFragment  extends Fragment {
     private SwipeRefreshLayout refresher;
     private Thread syncThread;
     RestClient rc;
+    AppBarLayout appBarLayout;
 
 
     @Override
@@ -47,10 +52,11 @@ public class FavoriteFragment  extends Fragment {
         // Create your fragment here
     }
 
-    public static FavoriteFragment newInstance()
+    public static FavoriteFragment newInstance(AppBarLayout appBarLayout)
     {
         FavoriteFragment frag1 = new FavoriteFragment();
         frag1.setArguments(new Bundle());
+        frag1.appBarLayout = appBarLayout;
         return frag1;
     }
 
@@ -58,7 +64,7 @@ public class FavoriteFragment  extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         View ignored = super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.main, null);
+        View view = inflater.inflate(R.layout.main2, null);
 
         mlistview = (ListView)view.findViewById(R.id.listViewStations);
         refresher = (SwipeRefreshLayout)view.findViewById(R.id.refresher);
@@ -77,7 +83,64 @@ public class FavoriteFragment  extends Fragment {
                 }
         );
 
-        SyncData();
+//        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+//            mlistview.setOnScrollListener(new AbsListView.OnScrollListener() {
+//                @Override
+//                public void onScrollStateChanged(AbsListView view, int scrollState) { }
+//                private int lastVisibleItem = 0;
+//                private int lastY = 0;
+//                private boolean downscr = false;
+//                private boolean upscr = false;
+//
+//
+//                @Override
+//                public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+//                    int top = 0;
+//                    if(view.getChildAt(0) != null){
+//                        top = view.getChildAt(0).getTop();
+//                    }
+//                    if(firstVisibleItem > lastVisibleItem){
+//                        //scroll down
+//                        if (!downscr) {
+//                            System.out.println("Down");
+//                            appBarLayout.setExpanded(false, true);
+//                            downscr = true;
+//                            upscr = false;
+//                        }
+//                    }else if(firstVisibleItem < lastVisibleItem){
+//                        //scroll up
+//                        if (!upscr) {
+//                            System.out.println("Up");
+//                            appBarLayout.setExpanded(true, true);
+//                            upscr = true;
+//                            downscr = false;
+//                        }
+//                    }else{
+//                        if(top < lastY){
+//                            //scroll down
+//                            if (!downscr) {
+//                                System.out.println("Down");
+//                                appBarLayout.setExpanded(false, true);
+//                                downscr = true;
+//                                upscr = false;
+//                            }
+//                        }else if(top > lastY){
+//                            //scroll up
+//                            if (!upscr) {
+//                                System.out.println("Up");
+//                                appBarLayout.setExpanded(true, true);
+//                                upscr = true;
+//                                downscr = false;
+//                            }
+//                        }
+//                    }
+//                    lastVisibleItem = firstVisibleItem;
+//                    lastY = top;
+//                }
+//            });
+//        }
+
+//        SyncData();
 
         return view;
     }
@@ -134,5 +197,9 @@ public class FavoriteFragment  extends Fragment {
         if (syncThread != null)
             syncThread.interrupt();
         super.onDestroy();
+    }
+
+    public ListView getMlistview() {
+        return mlistview;
     }
 }

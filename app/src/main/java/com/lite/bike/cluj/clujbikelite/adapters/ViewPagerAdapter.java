@@ -1,6 +1,7 @@
 package com.lite.bike.cluj.clujbikelite.adapters;
 
 import android.content.Context;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -18,13 +19,13 @@ import java.util.List;
 
 public class ViewPagerAdapter extends FragmentPagerAdapter {
     private static final int PAGE_COUNT = 2;
-    private AllFragment allFragment;
-    private  FavoriteFragment favoriteFragment;
+    public AllFragment allFragment;
+    public  FavoriteFragment favoriteFragment;
 
-    public ViewPagerAdapter(FragmentManager manager) {
+    public ViewPagerAdapter(FragmentManager manager, AppBarLayout appBarLayout) {
         super(manager);
-        allFragment = AllFragment.newInstance();
-        favoriteFragment = FavoriteFragment.newInstance();
+        allFragment = AllFragment.newInstance(appBarLayout);
+        favoriteFragment = FavoriteFragment.newInstance(appBarLayout);
     }
 
     @Override
