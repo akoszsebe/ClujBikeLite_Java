@@ -36,6 +36,7 @@
             android:id="@+id/textViev_parking"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginTop="16dp"
@@ -44,17 +45,6 @@
             android:text="Parking"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/border_radius"
-            android:inputType="textPersonName"
-            android:text="On Map"
-            android:textAlignment="center"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/darker_gray"
-            android:translationY="10dp" />
     </android.support.design.widget.AppBarLayout>
 
     <com.google.android.gms.maps.MapView

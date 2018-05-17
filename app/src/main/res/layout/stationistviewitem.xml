@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground">
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="220dp"
@@ -62,7 +64,9 @@
             android:layout_marginRight="5dp"
             android:layout_marginTop="16dp"
             android:gravity="end"
-            android:src="@drawable/info_icon" />
+            android:src="@drawable/map_icon"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"/>
 
         <TextView
             android:id="@+id/tvOcuppiedSpotsNumber"
