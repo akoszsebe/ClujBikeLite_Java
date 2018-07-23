@@ -1,8 +1,6 @@
 package com.lite.bike.cluj.clujbikelite.model;
 
 import java.util.Arrays;
-import java.util.List;
-import com.fasterxml.jackson.annotation.*;
 import com.google.gson.annotations.SerializedName;
 
 public class StationsData {

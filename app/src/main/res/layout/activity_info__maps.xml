@@ -29,8 +29,9 @@
             android:layout_marginTop="16dp"
             android:ems="10"
             android:inputType="textPersonName"
-            android:text="Bikes"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:text="@string/bikes_UpperCase"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            tools:ignore="TextViewEdits" />
 
         <TextView
             android:id="@+id/textViev_parking"
@@ -42,8 +43,9 @@
             android:layout_marginTop="16dp"
             android:ems="10"
             android:inputType="textPersonName"
-            android:text="Parking"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:text="@string/parking_Uppercase"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            tools:ignore="TextViewEdits" />
 
     </android.support.design.widget.AppBarLayout>
 

@@ -1,43 +1,33 @@
 package com.lite.bike.cluj.clujbikelite;
 
-import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.TabItem;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.animation.AccelerateInterpolator;
-import android.widget.AbsListView;
 
-import com.google.gson.Gson;
 import com.lite.bike.cluj.clujbikelite.adapters.ViewPagerAdapter;
-import com.lite.bike.cluj.clujbikelite.communication.RestClient;
 
+import java.util.Objects;
 
-import org.json.JSONObject;
-
-import java.util.HashSet;
-import java.util.Set;
+import butterknife.BindDrawable;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class HomeActivity extends AppCompatActivity {
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.viewpager) ViewPager viewPager;
+    @BindView(R.id.tabs) TabLayout  tabLayout;
+    @BindView(R.id.appbar) AppBarLayout appBarLayout;
 
-    RestClient rc;
-    private Gson gson = new Gson();
-    Fragment fragment = null;
-    private Toolbar toolbar;
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
+    @BindDrawable(R.drawable.icon_white) Drawable icon_white;
+
     private ViewPagerAdapter adapter;
     private boolean pause = false;
 
@@ -45,24 +35,27 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home);
+        ButterKnife.bind(this);
 
-        final Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         if (toolbar != null)
         {
             setSupportActionBar(toolbar);
+            Objects.requireNonNull(getSupportActionBar()).setIcon(icon_white);
+            getSupportActionBar().setDisplayShowTitleEnabled(true);
         }
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
 
-        AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.appbar);
-        adapter = new ViewPagerAdapter(getSupportFragmentManager(), appBarLayout);
+        adapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager));
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
-        viewPager.setCurrentItem(1);
+        SharedPreferences sharedPref = this.getSharedPreferences("allchecked", MODE_PRIVATE);
+        boolean allchecked = sharedPref.getBoolean("allchecked",true);
 
-        rc = new RestClient(this);
+        if (allchecked)
+            viewPager.setCurrentItem(0);
+        else
+            viewPager.setCurrentItem(1);
 
     }
 
@@ -77,7 +70,8 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public  boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_info_settings){
-
+            Intent info_MapsActivity = new Intent(this, Info_SettingActivity.class);
+            startActivity(info_MapsActivity);
         }
         return  super.onOptionsItemSelected(item);
     }

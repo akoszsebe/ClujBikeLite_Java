@@ -23,10 +23,10 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     public AllFragment allFragment;
     public  FavoriteFragment favoriteFragment;
 
-    public ViewPagerAdapter(FragmentManager manager, AppBarLayout appBarLayout) {
+    public ViewPagerAdapter(FragmentManager manager) {
         super(manager);
-        allFragment = AllFragment.newInstance(appBarLayout);
-        favoriteFragment = FavoriteFragment.newInstance(appBarLayout);
+        allFragment = AllFragment.newInstance();
+        favoriteFragment = FavoriteFragment.newInstance();
     }
 
     @Override

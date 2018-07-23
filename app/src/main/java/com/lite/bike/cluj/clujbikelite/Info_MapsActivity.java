@@ -18,22 +18,28 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
-public class Info_MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
-    private GoogleMap mMap;
-    private Toolbar toolbar;
-    Double longitude;
-    Double latitude;
-    String station_name;
-    boolean is_Favorite;
+public class Info_MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.textViev_bikes) TextView tv_bikes;
+    @BindView(R.id.textViev_parking) TextView tv_parking;
+    @BindView(R.id.mapView) MapView mMapView;
+
+    private Double longitude;
+    private Double latitude;
+    private String station_name;
+    private boolean is_Favorite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info__maps);
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        ButterKnife.bind(this);
 
         station_name = getIntent().getStringExtra("station_name");
         longitude = getIntent().getDoubleExtra("longitude",0.00);
@@ -44,26 +50,20 @@ public class Info_MapsActivity extends AppCompatActivity implements OnMapReadyCa
         SharedPreferences sharedPref = getSharedPreferences("favorite_stations", MODE_PRIVATE);
         final Set<String> favorite_stations = sharedPref.getStringSet("favorite_stations", new HashSet<String>());
 
-
-        TextView tv_bikes = (TextView) findViewById(R.id.textViev_bikes);
-        TextView tv_parking = (TextView) findViewById(R.id.textViev_parking);
-
-        tv_bikes.setText(tv_bikes.getText()+"     "+bikes );
-        tv_parking.setText(tv_parking.getText()+"  " +parking);
+        tv_bikes.setText(String.format("%s     %s", tv_bikes.getText(), bikes));
+        tv_parking.setText(String.format("%s  %s", tv_parking.getText(), parking));
         is_Favorite = favorite_stations.contains(station_name);
 
-        if (toolbar != null)
-        {
+        if (toolbar != null) {
             setSupportActionBar(toolbar);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setTitle(station_name);
         }
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        MapView mMapView = (MapView) findViewById(R.id.mapView);
-        mMapView.onCreate(savedInstanceState);
 
+        mMapView.onCreate(savedInstanceState);
         mMapView.onResume(); // needed to get the map to display immediately
 
         try {
@@ -76,11 +76,9 @@ public class Info_MapsActivity extends AppCompatActivity implements OnMapReadyCa
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-
         LatLng marker = new LatLng(latitude, longitude);
-        mMap.addMarker(new MarkerOptions().position(marker).title(station_name));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker,16.0f));
+        googleMap.addMarker(new MarkerOptions().position(marker).title(station_name));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker,16.0f));
     }
 
     @Override
@@ -106,8 +104,7 @@ public class Info_MapsActivity extends AppCompatActivity implements OnMapReadyCa
                 SharedPreferences sharedPref = getSharedPreferences("favorite_stations", Context.MODE_PRIVATE);
                 final Set<String> favorite_stations = sharedPref.getStringSet("favorite_stations", new HashSet<String>());
                 SharedPreferences.Editor editor = sharedPref.edit();
-                Set<String> new_favorite_stations = new HashSet<>();
-                new_favorite_stations.addAll(favorite_stations);
+                Set<String> new_favorite_stations = new HashSet<>(favorite_stations);
                 new_favorite_stations.remove(station_name);
                 editor.putStringSet("favorite_stations", new_favorite_stations);
                 editor.apply();
@@ -117,8 +114,7 @@ public class Info_MapsActivity extends AppCompatActivity implements OnMapReadyCa
                 SharedPreferences sharedPref = getSharedPreferences("favorite_stations", Context.MODE_PRIVATE);
                 final Set<String> favorite_stations = sharedPref.getStringSet("favorite_stations", new HashSet<String>());
                 SharedPreferences.Editor editor = sharedPref.edit();
-                Set<String> new_favorite_stations = new HashSet<>();
-                new_favorite_stations.addAll(favorite_stations);
+                Set<String> new_favorite_stations = new HashSet<>(favorite_stations);
                 new_favorite_stations.add(station_name);
                 editor.putStringSet("favorite_stations", new_favorite_stations);
                 editor.apply();

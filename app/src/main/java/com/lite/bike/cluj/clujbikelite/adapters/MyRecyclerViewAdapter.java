@@ -3,6 +3,7 @@ package com.lite.bike.cluj.clujbikelite.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,33 +17,35 @@ import com.lite.bike.cluj.clujbikelite.model.ListViewItemStation;
 import com.lite.bike.cluj.clujbikelite.model.Station;
 
 import java.util.List;
+import java.util.Locale;
+
+import butterknife.BindString;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.ViewHolder> {
-    private List<ListViewItemStation> mDataset;
-    Context context;
 
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
+    @BindString(R.string.bikes_UpperCase) String str_bikes;
+    @BindString(R.string.parking_Uppercase) String str_parking;
+
+    private List<ListViewItemStation> mDataset;
+    private Context context;
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
-        public TextView tvstationname;
-        public TextView tvstationAddress;
-        public TextView tvactivedevicenumber;
-        public TextView tvValue;
-        public ImageView ivsettings;
-        public ImageView imageviewActive;
+        @BindView(R.id.tvStationName) TextView tvstationname;
+        @BindView(R.id.tvStationAddress) TextView tvstationAddress;
+        @BindView(R.id.tvOcuppiedSpotsNumber) TextView tvactivedevicenumber;
+        @BindView(R.id.tvValue) TextView tvValue;
+        @BindView(R.id.imageviewAddToFavourites) ImageView ivsettings;
+        @BindView(R.id.imageviewActive) ImageView imageviewActive;
+
         public View view;
 
-        public ViewHolder(View itemView){
+        ViewHolder(View itemView){
             super(itemView);
+            ButterKnife.bind(this, itemView);
             view = itemView;
-            tvstationname = (TextView)itemView.findViewById(R.id.tvStationName);
-            tvstationAddress = (TextView)itemView.findViewById(R.id.tvStationAddress);
-            tvactivedevicenumber = (TextView)itemView.findViewById(R.id.tvOcuppiedSpotsNumber);
-            tvValue = (TextView) itemView.findViewById(R.id.tvValue);
-            ivsettings = (ImageView)itemView.findViewById(R.id.imageviewAddToFavourites);
-            imageviewActive = (ImageView)itemView.findViewById(R.id.imageviewActive);
         }
     }
 
@@ -53,25 +56,20 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     }
 
     // Create new views (invoked by the layout manager)
+    @NonNull
     @Override
-    public MyRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                   int viewType) {
-        // create a new view
-        View view = (View) LayoutInflater.from(parent.getContext())
+    public MyRecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.stationistviewitem, parent, false);
-
-        ViewHolder vh = new ViewHolder(view);
-        return vh;
+        ButterKnife.bind(this,view);
+        return new ViewHolder(view);
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final ListViewItemStation station = mDataset.get(position);
 
-        holder.imageviewActive.setImageResource(statusIcomSelector(station.station));
+        holder.imageviewActive.setImageResource(statusIconSelector(station.station));
 
         final Intent info_MapsActivity = new Intent(context, Info_MapsActivity.class);
         info_MapsActivity.putExtra("station_name", station.station.getStationName());
@@ -99,8 +97,8 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 
         holder.tvstationname.setText( mDataset.get(position).station.getStationName());
         holder.tvstationAddress.setText( mDataset.get(position).station.getAddress());
-        holder.tvactivedevicenumber.setText("Bikes "+ mDataset.get(position).station.getOcuppiedSpots());
-        holder.tvValue.setText("Parking "+ mDataset.get(position).station.getEmptySpots());
+        holder.tvactivedevicenumber.setText(String.format(Locale.ENGLISH,"%s %d", str_bikes, mDataset.get(position).station.getOcuppiedSpots()));
+        holder.tvValue.setText(String.format(Locale.ENGLISH,"%s %d", str_parking, mDataset.get(position).station.getEmptySpots()));
 
     }
 
@@ -117,7 +115,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     }
 
 
-    private int statusIcomSelector(Station station){
+    private int statusIconSelector(Station station){
         if (station.getStatus().contains("Functional")){
             if(station.getStatusType().equals("Online"))
                 return R.drawable.active;

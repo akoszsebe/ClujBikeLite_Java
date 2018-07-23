@@ -2,9 +2,8 @@ package com.lite.bike.cluj.clujbikelite.fragments;
 
 
 import android.annotation.SuppressLint;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
@@ -14,69 +13,59 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.google.gson.Gson;
 import com.lite.bike.cluj.clujbikelite.R;
 import com.lite.bike.cluj.clujbikelite.adapters.MyRecyclerViewAdapter;
-import com.lite.bike.cluj.clujbikelite.communication.RestClient;
 import com.lite.bike.cluj.clujbikelite.model.ListViewItemStation;
 import com.lite.bike.cluj.clujbikelite.model.Station;
 import com.lite.bike.cluj.clujbikelite.model.StationsData;
-
-import org.json.JSONObject;
+import com.lite.bike.cluj.clujbikelite.rest.ApiClient;
+import com.lite.bike.cluj.clujbikelite.rest.BikeRestService;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Objects;
 
-import static android.content.Context.MODE_PRIVATE;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 public class AllFragment extends Fragment {
 
-    private RecyclerView mRecyclerView;
+    @BindView(R.id.my_recycler_view) RecyclerView mRecyclerView;
+    @BindView(R.id.refresher) SwipeRefreshLayout refresher;
+
     private MyRecyclerViewAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-
-    private SwipeRefreshLayout refresher;
     private Thread syncThread;
-    RestClient rc;
-    AppBarLayout appBarLayout;
-
+    private BikeRestService bikeRestService;
 
     @Override
-    public  void onCreate(Bundle savedInstanceState)
-    {
+    public  void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Create your fragment here
     }
 
-    public static AllFragment newInstance(AppBarLayout appBarLayout)
-    {
+    public static AllFragment newInstance() {
         AllFragment frag1 = new AllFragment();
         frag1.setArguments(new Bundle());
-        frag1.appBarLayout = appBarLayout;
         return frag1;
     }
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-    {
-        View ignored = super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.main, null);
-        rc = new RestClient(this.getContext());
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate(R.layout.main,container,false);
+        ButterKnife.bind(this,view);
 
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
-        refresher = (SwipeRefreshLayout)view.findViewById(R.id.refresher);
-        mLayoutManager = new LinearLayoutManager(this.getContext());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this.getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(this.getContext(), LinearLayoutManager.VERTICAL));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(this.getContext()), LinearLayoutManager.VERTICAL));
 
         mAdapter = new MyRecyclerViewAdapter(new ArrayList<ListViewItemStation>(), this.getContext());
         mRecyclerView.setAdapter(mAdapter);
+        bikeRestService = ApiClient.getClient().create(BikeRestService.class);
 
         refresher.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
@@ -92,47 +81,37 @@ public class AllFragment extends Fragment {
         return view;
     }
 
-    public void SyncData()
-    {
-        SharedPreferences sharedPref = getActivity().getSharedPreferences("favorite_stations", MODE_PRIVATE);
-        final Set<String> favorite_stations = sharedPref.getStringSet("favorite_stations", new HashSet<String>());
+
+    public void SyncData() {
         syncThread = new Thread(){
             @Override
             public void run() {
-                rc.GetStationsData(new Response.Listener<JSONObject>() {
+                Call<StationsData> call = bikeRestService.getStationData();
+                call.enqueue(new Callback<StationsData>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-//                        System.out.println("Response : " + response.toString());
-                        Gson gson = new Gson();
-                        StationsData returnObj = gson.fromJson(response.toString(), StationsData.class);
-//                        System.out.println(returnObj.toString());
-                        if (returnObj != null) {
-                            Station[] stations;
-                            final List<ListViewItemStation> items;
-                            stations = returnObj.getData();
-                            items = new ArrayList<ListViewItemStation>();
-                            for (int i = 0; i < stations.length; i++) {
-                                if (favorite_stations.contains(stations[i].getStationName()))
-                                    items.add(new ListViewItemStation(i, stations[i]));
-                                else
-                                    items.add(new ListViewItemStation(i, stations[i]));
-                            }
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mAdapter.addData(items);
-                                    mAdapter.notifyDataSetChanged();
-                                }
-                            });
-
+                    public void onResponse(@NonNull Call<StationsData> call, @NonNull retrofit2.Response<StationsData> response) {
+                        StationsData resource = response.body();
+                        assert resource != null;
+                        Station[] stations;
+                        final List<ListViewItemStation> items;
+                        stations = resource.getData();
+                        items = new ArrayList<>();
+                        for (int i = 0; i < stations.length; i++) {
+                                items.add(new ListViewItemStation(i, stations[i]));
                         }
+                        Objects.requireNonNull(getActivity()).runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mAdapter.addData(items);
+                                mAdapter.notifyDataSetChanged();
+                            }
+                        });
 
                     }
-                }, new Response.ErrorListener() {
+
                     @Override
-                    public void onErrorResponse(VolleyError error) {
-                        System.out.println("Error : " + error.toString());
-                        //mTextMessage.setText("Error : "+ error.toString());
+                    public void onFailure(@NonNull Call<StationsData> call, @NonNull Throwable t) {
+                        call.cancel();
                     }
                 });
             }
@@ -141,8 +120,7 @@ public class AllFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy()
-    {
+    public void onDestroy() {
         if (syncThread != null)
             syncThread.interrupt();
         super.onDestroy();
