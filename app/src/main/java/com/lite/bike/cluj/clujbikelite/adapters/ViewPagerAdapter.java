@@ -21,7 +21,7 @@ import java.util.List;
 public class ViewPagerAdapter extends FragmentPagerAdapter {
     private static final int PAGE_COUNT = 2;
     public AllFragment allFragment;
-    public  FavoriteFragment favoriteFragment;
+    public FavoriteFragment favoriteFragment;
 
     public ViewPagerAdapter(FragmentManager manager) {
         super(manager);

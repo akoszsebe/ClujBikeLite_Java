@@ -52,10 +52,12 @@ public class HomeActivity extends AppCompatActivity {
         SharedPreferences sharedPref = this.getSharedPreferences("allchecked", MODE_PRIVATE);
         boolean allchecked = sharedPref.getBoolean("allchecked",true);
 
-        if (allchecked)
+        if (allchecked) {
             viewPager.setCurrentItem(0);
-        else
+        }
+        else {
             viewPager.setCurrentItem(1);
+        }
 
     }
 

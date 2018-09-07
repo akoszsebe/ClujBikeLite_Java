@@ -1,6 +1,8 @@
 package com.lite.bike.cluj.clujbikelite.model;
 
-public class ListViewItemStation {
+import android.support.annotation.NonNull;
+
+public class ListViewItemStation{
     public long Id;
     public Station station;
 
@@ -9,4 +11,5 @@ public class ListViewItemStation {
         this.Id = id;
         this.station = station;
     }
+
 }

@@ -21,6 +21,8 @@ import com.lite.bike.cluj.clujbikelite.rest.ApiClient;
 import com.lite.bike.cluj.clujbikelite.rest.BikeRestService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -39,15 +41,13 @@ public class FavoriteFragment  extends Fragment {
     @BindView(R.id.refresher) SwipeRefreshLayout refresher;
 
     private MyRecyclerViewAdapter mAdapter;
-    private Thread syncThread;
     private BikeRestService bikeRestService;
+    private Call<StationsData> call;
 
 
     @Override
     public  void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Create your fragment here
     }
 
     public static FavoriteFragment newInstance() {
@@ -62,13 +62,16 @@ public class FavoriteFragment  extends Fragment {
         View view = inflater.inflate(R.layout.main,container,false);
         ButterKnife.bind(this,view);
 
+        bikeRestService = ApiClient.getClient().create(BikeRestService.class);
+        SyncData();
+
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this.getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(this.getContext()), LinearLayoutManager.VERTICAL));
 
         mAdapter = new MyRecyclerViewAdapter(new ArrayList<ListViewItemStation>(),this.getContext());
         mRecyclerView.setAdapter(mAdapter);
-        bikeRestService = ApiClient.getClient().create(BikeRestService.class);
+
 
         refresher.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
@@ -79,7 +82,6 @@ public class FavoriteFragment  extends Fragment {
                     }
                 }
         );
-        SyncData();
 
         return view;
     }
@@ -87,48 +89,43 @@ public class FavoriteFragment  extends Fragment {
     public void SyncData() {
         SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getSharedPreferences("favorite_stations", MODE_PRIVATE);
         final Set<String> favorite_stations = sharedPref.getStringSet("favorite_stations", new HashSet<String>());
-        syncThread = new Thread(){
+        call = bikeRestService.getStationData();
+        call.enqueue(new Callback<StationsData>() {
             @Override
-            public void run() {
-                Call<StationsData> call = bikeRestService.getStationData();
-                call.enqueue(new Callback<StationsData>() {
+            public void onResponse(@NonNull Call<StationsData> call, @NonNull retrofit2.Response<StationsData> response) {
+                StationsData resource = response.body();
+                assert resource != null;
+                Station[] stations;
+                final List<ListViewItemStation> items;
+                stations = resource.getData();
+                Arrays.sort(stations);
+                items = new ArrayList<>();
+                for (int i = 0; i < stations.length; i++) {
+                    if (favorite_stations.contains(stations[i].getStationName()))
+                        items.add(new ListViewItemStation(i, stations[i]));
+                }
+                getActivity().runOnUiThread(new Runnable() {
                     @Override
-                    public void onResponse(@NonNull Call<StationsData> call, @NonNull retrofit2.Response<StationsData> response) {
-                        StationsData resource = response.body();
-                        assert resource != null;
-                        Station[] stations;
-                        final List<ListViewItemStation> items;
-                        stations = resource.getData();
-                        items = new ArrayList<>();
-                        for (int i = 0; i < stations.length; i++) {
-                            if (favorite_stations.contains(stations[i].getStationName()))
-                                items.add(new ListViewItemStation(i, stations[i]));
-                        }
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mAdapter.addData(items);
-                                mAdapter.notifyDataSetChanged();
-                            }
-                        });
-
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<StationsData> call, @NonNull Throwable t) {
-                        call.cancel();
+                    public void run() {
+                        mAdapter.addData(items);
+                        mAdapter.notifyDataSetChanged();
                     }
                 });
+
             }
-        };
-        syncThread.start();
+
+            @Override
+            public void onFailure(@NonNull Call<StationsData> call, @NonNull Throwable t) {
+                call.cancel();
+            }
+        });
+
     }
 
     @Override
-    public void onDestroy() {
-        if (syncThread != null)
-            syncThread.interrupt();
+    public void onDestroy(){
         super.onDestroy();
+        if (call!= null)
+            call.cancel();
     }
-
 }

@@ -1,10 +1,12 @@
 package com.lite.bike.cluj.clujbikelite.model;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Arrays;
 
-public class Station {
+public class Station  implements Comparable<Station>{
     @SerializedName("StationName")
     private String stationName;
     @SerializedName("Address")
@@ -122,5 +124,12 @@ public class Station {
                 ", Notifies=" + Arrays.toString(notifies) +
                 ", Id=" + id +
                 '}';
+    }
+
+
+    @Override
+    public int compareTo(@NonNull Station o) {
+        System.out.println(" ---  " + stationName.charAt(0) + ' ' + o.stationName.charAt(0));
+        return (stationName.charAt(0) >= o.stationName.charAt(0)) ? 1 : -1;
     }
 }
